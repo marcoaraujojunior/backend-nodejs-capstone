@@ -7,7 +7,7 @@ const pinoLogger = require('./logger')
 const connectToDatabase = require('./models/db')
 
 const app = express()
-app.use("*", cors())
+app.use('*', cors())
 const port = 3060
 
 // Connect to MongoDB we just do this one time
@@ -53,7 +53,7 @@ app.use((err, req, res, next) => {
 })
 
 app.get('/', (req, res) => {
-  res.send("Inside the server")
+  res.send('Inside the server')
 })
 
 app.listen(port, () => {
