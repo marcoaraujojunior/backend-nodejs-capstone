@@ -14,10 +14,10 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname) // Use the original file name
-  },
+  }
 })
 
-const upload = multer({ storage: storage })
+const upload = multer({ storage })
 
 // Get all secondChanceItems
 router.get('/', async (req, res, next) => {
@@ -36,16 +36,15 @@ router.get('/', async (req, res, next) => {
 // Add a new item
 router.post('/', upload.single('file'), async (req, res, next) => {
   try {
-
     const db = await connectToDatabase()
     const collection = db.collection('secondChanceItems')
     let secondChanceItem = req.body
-    const lastItemQuery = await collection.find().sort({ 'id': -1 }).limit(1)
+    const lastItemQuery = await collection.find().sort({ id: -1 }).limit(1)
     await lastItemQuery.forEach(item => {
       secondChanceItem.id = (parseInt(item.id) + 1).toString()
     })
-    const date_added = Math.floor(new Date().getTime() / 1000)
-    secondChanceItem.date_added = date_added
+    const dateAdded = Math.floor(new Date().getTime() / 1000)
+    secondChanceItem.date_added = dateAdded
     secondChanceItem = await collection.insertOne(secondChanceItem)
     res.status(201).json(secondChanceItem)
   } catch (e) {
@@ -59,7 +58,7 @@ router.get('/:id', async (req, res, next) => {
     const id = req.params.id
     const db = await connectToDatabase()
     const collection = db.collection('secondChanceItems')
-    const secondChanceItem = await collection.findOne({ id: id })
+    const secondChanceItem = await collection.findOne({ id })
     if (!secondChanceItem) {
       return res.status(404).send('secondChanceItem not found')
     }
@@ -95,9 +94,9 @@ router.put('/:id', async (req, res, next) => {
       { returnDocument: 'after' }
     )
     if (updatepreloveItem) {
-      res.json({ 'uploaded': 'success' })
+      res.json({ uploaded: 'success' })
     } else {
-      res.json({ 'uploaded': 'failed' })
+      res.json({ uploaded: 'failed' })
     }
   } catch (e) {
     next(e)
@@ -117,7 +116,7 @@ router.delete('/:id', async (req, res, next) => {
       return res.status(404).json({ error: 'secondChanceItem not found' })
     }
     await collection.deleteOne({ id })
-    res.json({ 'deleted': 'success' })
+    res.json({ deleted: 'success' })
   } catch (e) {
     next(e)
   }
